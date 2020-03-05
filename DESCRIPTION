@@ -2,7 +2,7 @@ Package: SurfaceTortoise
 Type: Package
 Title: Find Optimal Sampling Locations Based on Spatial Covariate(s)
 Version: 1.0.1
-Author: Kristin Piikki & Mats Söderström
+Author: Kristin Piikki, Mats Söderström & John Mutua
 Maintainer: Kristin Piikki <kristin.piikki@slu.se>
 Description: Create sampling designs using the surface reconstruction algorithm.
   Original method by: Olsson, D. 2002. A method to optimize soil sampling from 
