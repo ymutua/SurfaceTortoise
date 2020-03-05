@@ -4,10 +4,21 @@
 \alias{tortoise}
 \title{SurfaceTortoise}
 \usage{
-tortoise(x = NULL, y = NULL, method = "directed", edge = 0,
-  strat_size = NULL, min_dist = 0, p_idw = 2, nmax_idw = 8,
-  resolution = NULL, filter = 1, stop_n = NULL, stop_dens = 1,
-  plot_results = F)
+tortoise(
+  x = NULL,
+  y = NULL,
+  method = "directed",
+  edge = 0,
+  strat_size = NULL,
+  min_dist = 0,
+  p_idw = 2,
+  nmax_idw = 8,
+  resolution = NULL,
+  filter = 1,
+  stop_n = NULL,
+  stop_dens = 1,
+  plot_results = F
+)
 }
 \arguments{
 \item{x}{Raster dataset. Required for method = directed. The raster must have
