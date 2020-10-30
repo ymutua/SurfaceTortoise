@@ -4,11 +4,11 @@
 #' algoritm. Grid sampling and random  sampling are also available. All three sampling
 #' designs can optionally be stratified by a square grid to ensure spatial coverage.
 #'
-#' @author Kristin Piikki & Mats Söderström ,  \email{kristin.piikki@@slu.se}
+#' @author Kristin Piikki, Mats Söderström & John Mutua ,  \email{kristin.piikki@@slu.se}
 
 #' @param x Raster dataset. Required for method = directed. The raster must have
 #' a defined coordinate system and must be of class numeric. If x is a raster stack or
-#' raster brick, the first principal compinent of the multiple layers will be
+#' raster brick, the first principal component of the multiple layers will be
 #' used for sampling. If the raster dataset has a single layer, it will be used
 #' as is.
 
@@ -27,7 +27,7 @@
 #' raster cells, original resolution) used for mean filtering of the raster.
 #' Default = 1 (no filtering)
 #'
-#' @param resolution An number. If provided, the raster data vill be resampled
+#' @param resolution A number. If provided, the raster data vill be resampled
 #' to this resolution. Optional.
 #'
 #' @param p_idw An integer. Power exponent used for idw-interpolation
@@ -46,7 +46,7 @@
 #' stratification size will be comuted from the number of samples. Negative
 #' values are not allowed.
 #'
-#' @param min_dist A positive.number. Minimum distance allowed between samples.
+#' @param min_dist A positive number. Minimum distance allowed between samples.
 #' Valid for the 'random' and the 'directed' methods.
 #'
 #' @param stop_n An integer. The number of samples to place. If not provided,
