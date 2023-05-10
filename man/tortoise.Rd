@@ -2,7 +2,7 @@
 % Please edit documentation in R/tortoise.R
 \name{tortoise}
 \alias{tortoise}
-\title{SurfaceTortoise}
+\title{tortoise}
 \usage{
 tortoise(
   x = NULL,
@@ -17,113 +17,126 @@ tortoise(
   filter = 1,
   stop_n = NULL,
   stop_dens = 1,
-  plot_results = F
+  plot_results = T
 )
 }
 \arguments{
-\item{x}{Raster dataset. Required for method = directed. The raster must have
-a defined coordinate system and must be of class numeric. If x is a raster stack or
-raster brick, the first principal compinent of the multiple layers will be
-used for sampling. If the raster dataset has a single layer, it will be used
-as is.}
+\item{x}{SpatRaster. Required for method = directed. The raster must have
+a defined coordinate system, which is projected, and must be of class numeric.
+If x has more than onelayer, the first principal component of the layers will be
+used for sampling.}
 
-\item{y}{SpatialPolygonsDataframe delineating the area to be sampled. Required
+\item{y}{SpatVector delineating the area to be sampled. Required
 for method = 'grid' and method = 'random'. Optional for method = 'directed.
-The SpatialPolygonsDataframemust must have a defined coordinate system and,
-if a raster is provided, the coordinate system shall be the same as for the
-raster. If x and y are not completely overlapping, their intersection will be
+The SpatVector must have a defined coordinate system, which is projected.
+If a SpatRaster is #' provided, the coordinate system shall be the same as
+for the raster. If x and y are not completely overlapping, their intersection will be
 sampled.}
 
 \item{method}{Sampling method: 'directed' = directed sampling (SurfaceTortoise
 algorithm), 'grid' = regular sampling (center points of strata) and
-'random' = random points. Default is 'directed'}
+'random' = random points. Default is 'directed'.}
 
-\item{edge}{A number. Buffer zone (metre) inside the sampled area border,
-where sampling is prohibited. Optional.}
+\item{edge}{A positive number. Optional. Buffer zone (unit of the coordinate
+reference system) inside the sampled area border,
+where sampling is prohibited.}
 
-\item{strat_size}{A number. Cell side (metre) of a square stratification grid.
-Optional. #' If both strat_size and stop_n are specified. stop_n overruns
-this argument #' with an adjusted strat_size. If strat_size is not specified.
-The sampling will be done without stratification. If strat_size = 0,
-stratification size will be comuted from the number of samples. Negative
-values are not allowed.}
+\item{strat_size}{A positive number, 0, or NULL. Optional. Cell side  of a square
+stratification grid (unit of the coordinate reference system).If both
+strat_size and stop_n are specified, stop_n overruns this argument with an
+adjusted strat_size. If strat_size is NULL or 0, the sampling will be done
+without stratification.}
 
-\item{min_dist}{A positive.number. Minimum distance allowed between samples.
-Valid for the 'random' and the 'directed' methods.}
+\item{min_dist}{A positive number. Optional. Minimum distance allowed between
+samples. Valid for the 'random' and the 'directed' methods. one can for example
+set min_dist to the diameter of the sample support to prevent overlapping
+samples.}
 
-\item{p_idw}{An integer. Power exponent used for idw-interpolation
-(method = 'directed'). Default is 2.}
+\item{p_idw}{An integer. Exponent used for idw-interpolation
+(method =='directed'). Default = 2.}
 
 \item{nmax_idw}{An integer. Number of neighbouring samples used for
-idw-interpolation (method = 'directed'). Default is 8.}
+idw-interpolation (method =='directed'). Default = 8.}
 
-\item{resolution}{An number. If provided, the raster data vill be resampled
-to this resolution. Optional.}
+\item{resolution}{A positive number. Optional. If provided, the raster data
+will be resampled to this resolution.}
 
-\item{filter}{An integer. Side of the square window (number of
+\item{filter}{A positive integer. Side of the square window (number of
 raster cells, original resolution) used for mean filtering of the raster.
-Default = 1 (no filtering)}
+Default = 1 (no filtering).}
 
-\item{stop_n}{An integer. The number of samples to place. If not provided,
-it will be conuted from the numbers of strata generated from the specificed
-stratication size (argument strat_size) and the number of samples to place
-per stratum (argument stop_dens).}
+\item{stop_n}{A positive integer, or NULL. Optional. The number of samples to place.
+If NULL, it will be computed from the numbers of strata generated from the
+specified stratification size (argument strat_size) and the number of samples
+to place per stratum (argument stop_dens).}
 
-\item{stop_dens}{An integer. The number of samples to place in each stratum.
+\item{stop_dens}{A positive integer. The number of samples to place in each stratum.
 Does not apply for method = 'grid' (always stop_dens = 1) and not for
-non-stratified sampling. Default is 1.}
+non-stratified sampling. Default = 1.}
 
 \item{plot_results}{Logical. Shall results be plotted? Default is FALSE.}
 }
 \value{
 A list with
-1) sampled_raster = the sampled raster (only if method = 'directed')
-2) samples = a spatialPointsDataFrame with sample locations
-3) sampled_area = a SpatialPolygonsDataFrame with a polygon for the sampled area.
-4) stratification = a a SpatialPolygonsDataFrame with the stratification polygons.
-5) feedback= a dataframe with generated text messages.
+1) sampled_raster = the sampled raster (only if method =='directed')
+2) samples = a SpatVector of points (the sample locations)
+3) sampled_area = a SpatVector of polygons (the sampled area).
+4) stratification = a SpatVector of polygons (stratification grid).
+5) feedback = a dataframe with generated text messages.
 }
 \description{
 Optimizing spatial sampling using the Surface Tortoise
-algoritm. Grid sampling and random  sampling are also available. All three sampling
+algorithm. Grid sampling and random  sampling are also available. All three sampling
 designs can optionally be stratified by a square grid to ensure spatial coverage.
 }
 \details{
 The Surface Tortoise algorithm for directed sampling
-uses a raster dataset to find optimal sample locations.
+uses a raster to find optimal sample locations.
 The sampling strategy is based on the principle that an interpolation of the
-samples should be as similar as possible to the guide raster. When sample
-locations are identified, first the center point of the raster cell with the
-maximum deviation from the covariate raster mean is sampled. Then the raster
-cell with the maximum deviation from the first sampled raster cell is sampled.
-From then on, the values of the sampled raster cells are interpolated by
-inverse distance weighting (idw) and the center point of the raster cell with
-the largest absolute difference to the guide raster (error) is sampled.
+samples should be as similar as possible to the guide raster.First, the center point
+of the raster cell with the maximum deviation from the raster mean is sampled. Then,
+the raster cell with the maximum deviation from the first sampled raster cell
+is sampled. From then on, the values of the sampled raster cells are interpolated by
+inverse distance weighting (idw), and the center point of the raster cell with
+the largest absolute difference to the guide raster (the largest error) is sampled.
 A new idw interpolation is made and a new cell is sampled. This is repeated
-is reached.The sampling can be stratified by a square grid. When a sample has
-been placed in a stratum, no more samples will be placed in that stratum again
-until all other strata have been sampled. The likelihood for a clipped stratum,
-e.g. at the edge of the area to be sampled, is equal to the area of that stratum
-divided by the area of a full stratum.
+until a stopping criterion (stop_n or stop_dens) is reached.The sampling can be
+stratified by a square grid. When a sample has been placed in a stratum, no more
+samples will be placed in that stratum again until all other strata have been sampled.
+The likelihood for a clipped stratum, at the edge of the area to be sampled,
+is equal to the area of that stratum divided by the area of a full stratum.
+Samples are placed in raster cell center points.
 
 The optional raster processing steps:
-(is done) is carried out in the folowing order:
+is carried out in the following order:
 1) mean filtering (argument: filter)
 2) resampling to specified resolution (argument: resolution),
-3) computation of first pricipal component (if x is a rastr stack or raster
-brick with multiple layers).
+3) computation of first principal component (if x has multiple layers).
 }
 \examples{
-data(boundary)
-grid.sampling<-tortoise(y=boundary,method='grid',edge=30,strat_size=50,
-min_dist=10,plot_results=FALSE)
+#load packages
+require(terra)
+require(gstat)
+require(sf)
+#create an example raster dataset
+x<-rast(nrow=5, ncol=10, vals= sample(1:4, 50, replace=TRUE),crs=crs("EPSG:3857"))
+x<-disagg(x, 10, 'bilinear')
+
+#create an example SpatVector of polygons
+a<-cbind(
+  x=c(-100, -120, -75, 40, 100, 120,  50, -100),
+  y=c(-50, 0, 50, 75, 40, -30, -60, -50)
+)
+y<-vect(a, "polygons"); crs(y)<-crs(x)
+
+#do a directed stratified sampling for 25 samples. Let the stratification
+#grid size be determined automatically and visualize the sampling
+#procedure (default)
+tortoise(x, y, stop_n=25)
 }
 \references{
 Olsson, D. 2002. A method to optimize soil sampling from
 ancillary data. Poster presenterad at: NJF seminar no. 336,
 Implementation of Precision Farming in Practical Agriculture, 10-12 June
 2002, Skara, Sweden.
-}
-\author{
-Kristin Piikki & Mats Söderström ,  \email{kristin.piikki@slu.se}
 }
