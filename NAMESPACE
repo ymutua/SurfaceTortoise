@@ -2,6 +2,6 @@
 
 export(tortoise)
 import(gstat)
-import(raster)
-import(rgeos)
-import(sp)
+import(sf)
+import(terra)
+importFrom('stats','complete.cases')
